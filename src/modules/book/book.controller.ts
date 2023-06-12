@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -32,8 +33,14 @@ export class BookController {
 
   @Get(':id')
   @ApiOkResponse({ type: BookEntity })
-  findOne(@Param('id') id: string) {
-    return this.bookService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const book = await this.bookService.findOne(id);
+
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} does not exist.`);
+    }
+
+    return book;
   }
 
   @Patch(':id')
