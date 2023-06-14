@@ -21,14 +21,14 @@ export class BookController {
 
   @Post()
   @ApiCreatedResponse({ type: BookEntity })
-  create(@Body() createBookDto: CreateBookDto) {
-    return this.bookService.create(createBookDto);
+  async create(@Body() createBookDto: CreateBookDto) {
+    return new BookEntity(await this.bookService.create(createBookDto));
   }
 
   @Get()
   @ApiOkResponse({ type: BookEntity, isArray: true })
-  findAll() {
-    return this.bookService.findAll();
+  async findAll() {
+    return (await this.bookService.findAll()).map((b) => new BookEntity(b));
   }
 
   @Get(':id')
@@ -40,18 +40,18 @@ export class BookController {
       throw new NotFoundException(`Book with id ${id} does not exist.`);
     }
 
-    return book;
+    return new BookEntity(book);
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: BookEntity })
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.bookService.update(id, updateBookDto);
+  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return new BookEntity(await this.bookService.update(id, updateBookDto));
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: BookEntity })
-  remove(@Param('id') id: string) {
-    return this.bookService.remove(id);
+  async remove(@Param('id') id: string) {
+    return new BookEntity(await this.bookService.remove(id));
   }
 }

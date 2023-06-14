@@ -16,7 +16,10 @@ export class BookService {
   }
 
   findOne(id: string) {
-    return this.prisma.book.findFirst({ where: { id: id } });
+    return this.prisma.book.findUnique({
+      where: { id: id },
+      include: { author: true },
+    });
   }
 
   update(id: string, updateBookDto: UpdateBookDto) {
